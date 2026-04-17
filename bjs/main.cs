@@ -87,7 +87,7 @@ public class Card
     protected decimal pCash;
     private string npcFName;
     private string npcLName;
-    private string dealerFName = "Space";
+    private string dealerFName = "Dealer";
     private string dealerLName = "Casino";
     private bool NPCFlag;
     public static bool PlayerBust { get; set; }
@@ -757,7 +757,7 @@ public class Card
     {
         ReturnHandValues(targetindex);
         ReturnHandValuesDealer();
-        if (currSoftValue > 21 || highestValueDealer > 21)
+        if (highestValue > 21 || highestValueDealer > 21)
         {
             Bust?.Invoke(this, new GameStateEventArgs(targetindex));
             return true;
@@ -777,30 +777,29 @@ public class Card
         var (soft, hard) = FinalTable[targetindex].GetHandValueAsInt(targetindex);
         currSoftValue = soft;
         currHardValue = hard;
-        if ((currSoftValue < currHardValue) && currHardValue <= 21)
+        if (currSoftValue < currHardValue && currHardValue <= 21)
         {
             highestValue = currHardValue;
         }
-        if ((currSoftValue> 0 && currHardValue == 0) || (currSoftValue == currHardValue))
+        else if ((currSoftValue> 0 && currHardValue == 0) || (currSoftValue == currHardValue))
         {
             highestValue = currSoftValue;
         }
-        if (currSoftValue <= 21 && currHardValue > 21)
+        else if ((currSoftValue <= currHardValue) && currHardValue > 21)
         {
             highestValue = currSoftValue;
         }
-        highestValue = Math.Max(currSoftValue, currHardValue);
     }
     public void ReturnHandValuesDealer()
     {
         var (soft, hard) = FinalTable[0].GetHandValueAsInt(0);
         currSoftValueDealer = soft;
         currHardValueDealer = hard;
-        if ((currSoftValueDealer < currHardValueDealer) && currHardValueDealer <= 21)
+        if (currSoftValueDealer < currHardValueDealer && currHardValueDealer <= 21)
         {
             highestValueDealer = currHardValueDealer;
         }
-        if ((currSoftValueDealer > 0 && currHardValueDealer == 0) || (currSoftValueDealer == currHardValueDealer))
+        else if ((currSoftValueDealer > 0 && currHardValueDealer == 0) || (currSoftValueDealer == currHardValueDealer))
         {
             highestValueDealer = currSoftValueDealer;
         }
@@ -810,7 +809,7 @@ public class Card
         }
        // highestValueDealer = Math.Max(currSoftValueDealer, currHardValueDealer);
       //  lowestValueDealer = Math.Min(currSoftValueDealer, currHardValueDealer);
-        Console.WriteLine($"ReturnHandValuesDealer(): currsoft {currSoftValueDealer} currHard {currHardValueDealer} highest {highestValueDealer}");
+        //Console.WriteLine($"ReturnHandValuesDealer(): currsoft {currSoftValueDealer} currHard {currHardValueDealer} highest {highestValueDealer}");
     }
     public async void Betting()
     {
@@ -1154,7 +1153,7 @@ public class Card
         {
             ReturnHandValuesDealer();
             FinalTable[currentIndex].GetHandInfo(currentIndex);
-            
+            Console.WriteLine($"Dealer has {FinalTable[currentIndex].GetHandValueAsInt(currentIndex)}");
             AIStrats(FinalTable[currentIndex].GetStrat(), out bool done);
             FinalTable[currentIndex].GetHandValue(currentIndex, out _);
 
@@ -1166,6 +1165,7 @@ public class Card
     {
         
         ReturnHandValuesDealer();
+        Console.WriteLine($"{FinalTable[0].GetHandValue(0, out _).ToString()}");
         currentIndex = 0;
         foreach (Seats c in FinalTable)
         {
@@ -1175,9 +1175,12 @@ public class Card
             }
             else
             {
+                
                 ReturnHandValues(currentIndex);
+                Console.WriteLine($"{FinalTable[currentIndex].GetFirstName()} had {FinalTable[currentIndex].GetHandValueAsInt(currentIndex)}");
                 if ((highestValue > highestValueDealer) && highestValue <= 21)
                 {
+                    
                     FinalTable[currentIndex].WinBet(currentIndex);
                 }
                 if (highestValue == highestValueDealer)

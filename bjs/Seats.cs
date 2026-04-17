@@ -205,7 +205,7 @@ namespace bjs
             }
             
             FinalTable[targetindex].GetHandValue(targetindex, out _);
-            Console.WriteLine($"{handValueIntTuple}");
+            //Console.WriteLine($"{handValueIntTuple}");
             return handValueIntTuple;
         }
         public object GetHandInfo(int targetindex)

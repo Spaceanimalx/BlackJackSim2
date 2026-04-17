@@ -61,6 +61,7 @@ internal class Program : Card
             CardTest.CheckWinners();
             Console.WriteLine("Cleanup.");
             CardTest.Cleanup();
+            Console.WriteLine("New round.");
 
             
 
